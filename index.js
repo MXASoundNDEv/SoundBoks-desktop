@@ -84,3 +84,13 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
 });
+
+app.on('before-quit', async (event) => {
+    console.log('Déconnexion des périphériques BLE avant la fermeture...');
+    try {
+        await bleManager.disconnectAll(); // Méthode pour déconnecter tous les périphériques
+        console.log('Tous les périphériques BLE ont été déconnectés proprement.');
+    } catch (err) {
+        console.error('Erreur lors de la déconnexion des périphériques BLE :', err);
+    }
+});

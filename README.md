@@ -7,16 +7,16 @@ Contrôle ta **Soundboks** directement depuis un ordinateur via **Bluetooth Low 
 ---
 
 ## ✨ Fonctionnalités
-
-* 🔍 **Scan des appareils Soundboks**
-* 📶 **Connexion automatique** à une Soundboks détectée
-* 🔐 **Authentification** via PIN (si activé) [WIP]
-* 🎚️ **Contrôle de volume visuel**
-* 📡 **Lecture des informations système (firmware, modèle, etc.)**
-* 💡 Interface **moderne** en HTML/CSS/JS
-* 🛠️ Architecture **modulaire** (`lib/`, `data/`, `public/`, etc.)
-
----
+* 🔍 **Scan des appareils Soundboks** : Détection rapide et efficace des appareils à proximité.
+* 📶 **Connexion automatique** : Association simplifiée avec une Soundboks détectée.
+* 🔐 **Authentification via PIN** *(en cours de développement)* : Sécurisation des connexions Bluetooth.
+* 🎚️ **Contrôle de volume visuel** : Ajustez le volume avec une interface intuitive.
+* 📡 **Lecture des informations système** : Accédez aux détails comme le firmware et le modèle.
+* 💡 **Interface moderne** : Conçue en HTML/CSS/JS pour une expérience utilisateur fluide.
+* 🛠️ **Architecture modulaire** : Organisation claire avec des dossiers dédiés (`lib/`, `data/`, `public/`, etc.).
+* ⚙️ **Gestionnaire de mode** *(en cours de développement)* : Personnalisez les paramètres audio.
+* 🤝 **TeamUp** *(en cours de développement)* : Fonctionnalité collaborative pour connecter plusieurs appareils.
+* 📊 **Propanel** *(en cours de développement)* : Tableau de bord avancé pour la gestion des appareils.
 
 ## 📁 Structure du projet
 
