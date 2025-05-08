@@ -1,0 +1,50 @@
+# Système
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dépendances
+node_modules/
+bower_components/
+
+# Environnements
+.env
+.env.local
+.env.*.local
+
+# Build
+dist/
+build/
+out/
+
+# IDE/Éditeurs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Tests
+coverage/
+*.lcov
+
+# Divers
+*.lock
+*.swp
+*.tmp
+*.bak
+*.orig
+
+# Résultats de scan BLE
+data/ble_scan_results.json
+data/volume_mapping.json
+scripttest/
+node_modules/
+__tests__/

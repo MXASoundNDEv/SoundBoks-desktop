@@ -1,0 +1,27 @@
+{
+  "name": "sdbapp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "electron": "electron .",
+    "start": "electron .",
+    "test": "jest"
+  },
+  "keywords": [
+    "soundboks",
+    "sdb",
+    "bluetooth"
+  ],
+  "author": "mxa",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@abandonware/noble": "^1.9.2-26",
+    "@electron/remote": "^2.1.2",
+    "chalk": "^4.1.2",
+    "electron": "^36.0.0",
+    "electron-builder": "^26.0.12",
+    "fs-extra": "^11.3.0",
+    "uuid": "^11.1.0"
+  }
+}

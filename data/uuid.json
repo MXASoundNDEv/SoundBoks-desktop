@@ -1,0 +1,19 @@
+{
+    "device_name": "00002a00-0000-1000-8000-00805f9b34fb",
+    "manufacturer_name": "00002a29-0000-1000-8000-00805f9b34fb",
+    "model_number": "00002a24-0000-1000-8000-00805f9b34fb",
+    "serial_number": "00002a25-0000-1000-8000-00805f9b34fb",
+    "hardware_revision": "00002a27-0000-1000-8000-00805f9b34fb",
+    "firmware_revision": "00002a26-0000-1000-8000-00805f9b34fb",
+    "software_revision": "00002a28-0000-1000-8000-00805f9b34fb",
+    "system_id": "00002a23-0000-1000-8000-00805f9b34fb",
+    "volume": "7649b19f-c605-46e2-98f8-6c1808e0cfb4",
+    "lock_status": "11ad501d-fa86-43cc-8d92-5a27ee672f1a",
+    "mode_audio": "37bffa18-7f5a-4c8d-8a2d-362866cedfad",
+    "write_control": "1234",
+    "read_data": "5678",
+    "SOUNDBOKS_ID" : "0x0858",
+    "SERVICE_SOUNDBOKS_UUID" : "f5c2657064ec4906b9986a7302879a2b",
+    "VOLUME_CHAR_UUID" : "7649b19fc60546e298f86c1808e0cfb4",
+    "VOLUME_SERVICE_UUID" : "445b9ffb348f4e1ba4173559b8138390"
+}
