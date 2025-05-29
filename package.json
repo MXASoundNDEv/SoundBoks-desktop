@@ -12,6 +12,8 @@
   "build": {
     "appId": "com.soundboks.controller",
     "productName": "Soundboks Desktop Controller",
+    "icon": "public/images/speaker_icon-255x255.ico",
+    "publish" : null,
     "files": [
       "index.js",
       "preload.js",
@@ -36,7 +38,7 @@
   ],
   "author": "mxa",
   "license": "ISC",
-  "description": "",
+  "description": "Aplication Windows pour controler ca soundboks",
   "devDependencies": {
     "chalk": "^4.1.2",
     "electron": "^25.8.4",
