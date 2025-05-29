@@ -14,6 +14,8 @@ const BLEManager = require('./lib/ble_manager.js');
 const bleManager = new BLEManager();
 let currentDevice; // Variable pour stocker le périphérique actuellement connecté
 let currentVolume; // Variable pour stocker le volume actuel
+const { updateElectronApp } = require('update-electron-app')
+updateElectronApp()
 
 let win;
 let tray;

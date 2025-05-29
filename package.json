@@ -2,6 +2,7 @@
   "name": "sdbapp",
   "version": "1.0.0",
   "main": "index.js",
+  "repository": "https://github.com/MXASoundNDEv/SoundBoks-desktop",
   "scripts": {
     "electron": "electron .",
     "start": "electron .",
@@ -46,6 +47,7 @@
     "@abandonware/noble": "^1.9.2-26",
     "@electron/remote": "^2.1.2",
     "fs-extra": "^11.3.0",
+    "update-electron-app": "^3.1.1",
     "uuid": "^11.1.0"
   }
 }
