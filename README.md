@@ -13,7 +13,6 @@ Contrôle ta **Soundboks** directement depuis un ordinateur via **Bluetooth Low 
 * 🎚️ **Contrôle de volume visuel** : Ajustez le volume avec une interface intuitive.
 * 📡 **Lecture des informations système** : Accédez aux détails comme le firmware et le modèle.
 * 💡 **Interface moderne** : Conçue en HTML/CSS/JS pour une expérience utilisateur fluide.
-* 🛠️ **Architecture modulaire** : Organisation claire avec des dossiers dédiés (`lib/`, `data/`, `public/`, etc.).
 * ⚙️ **Gestionnaire de mode** *(en cours de développement)* : Personnalisez les paramètres audio.
 * 🤝 **TeamUp** *(en cours de développement)* : Fonctionnalité collaborative pour connecter plusieurs appareils.
 * 📊 **Propanel** *(en cours de développement)* : Tableau de bord avancé pour la gestion des appareils.
@@ -42,7 +41,25 @@ SoundboksApp/
 
 ```
 
+## 📸 Aperçu de l'application
+
+### 🔍 Scan des appareils
+![Scan](/image/Frame%205.png)
+
 ---
+
+### 📋 Liste détectée
+![Liste](/image/Frame%203.png)
+
+---
+
+### 🎚️ Contrôle
+![Contrôle](/image/Frame%202.png)
+
+---
+
+### ⚙️ Paramètres
+![Paramètres](/image/Frame%204.png)
 
 ## 📦 Installation
 
@@ -118,7 +135,6 @@ Si tu veux contribuer ou proposer une amélioration :
 
 * Fais un fork
 * Crée une **pull request**
-* Ou contacte \[ton email ici]
 
 ---
 

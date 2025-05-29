@@ -1,6 +1,8 @@
 //config
 const maxLogicalSteps = 11; // Valeurs de 0 à 11 inclus
 const maxBluetoothValue = 255;
+const indexCard = 0; // Index de l'élément à créer
+const loadingTime = 30; // Temps de chargement en millisecondes (3 secondes)
 
 // This file is part of the SDBAPPJS project.
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,44 +12,88 @@ document.addEventListener('DOMContentLoaded', () => {
     const maxValue = 11;
 
     let currentDevice = null;
+    let currentVolume = null;
 
-    // Mock devices for testing
-    const mockDevices = [];
+    // Vérifier si un périphérique est déjà connecté
+    window.electronAPI.invoke('status').then(status => {
+        if (status.device) {
+            currentDevice = status.device;
+            currentVolume = status.volume;
+            console.log(`Périphérique déjà connecté : ${currentDevice}`);
+            const card = createDeviceCard({ name: 'Connected Device', address: currentDevice }, indexCard, true);
+            deviceList.appendChild(card);
+            indexCard++;
+        }
+    });
 
-    function createDeviceCard(device, index) {
+    function createDeviceCard(device, index,connect = false) {
         const card = document.createElement('div');
         card.className = 'device-card';
         card.style.animationDelay = `${index * 150}ms`;
+        if (connect) {
+            card.classList.add('expanded');
+        }
 
         card.innerHTML = `
             <div class="device-info">
-              <div class="speaker-icon"></div>
-              <div>
-                <strong>${device.name}</strong><br>
-                <small>${device.address}</small>
-              </div>
+                <div class="speaker-icon"></div>
+                <div>
+                    <strong>${device.name}</strong><br>
+                    <small>${device.address}</small>
+                </div>
             </div>
-            <button class="connect-btn">Connect</button>
+            <button class="connect-btn">Connect ➜</button>
             <div class="expanded-content">
-              <div><strong>Status</strong></div>
-              <div class="status-container">
-                <div class="status-bar-fill"></div>
-                <div class="status-number">0</div>
-              </div>
-              <div class="actions">
-                <button class="action-btn">Turn Off</button>
-                <button class="action-btn">Mode</button>
-              </div>
+                <div class="top-row">
+                    <div class="speaker-image"></div>
+                    <div style="height: 150px;" class="divider"></div>
+                    <div class="info">
+                        <strong>${device.name}</strong><br>
+                        <span style="font-size: 0.9em;">${device.address}</span>
+                        <div class="status-icons">
+                            <div class="bluetooth-icon"></div>
+                            <div class="signal-icon"></div>
+                        </div>
+                    </div>
+                    <div class="more-icon"></div>
+                </div>
+                <div class="volume-bar" id="slider-${index}">
+                    <div class="fill" id="fill-${index}"></div>
+                    <div class="volume-icon"></div>
+                    <div class="volume-number" id="volumeValue-${index}">3</div>
+                </div>
+                <div class="actions">
+                    <button class="action-btn">Turn OFF</button>
+                    <div class="divider"></div>
+                    <button class="action-btn">Mode</button>
+                    <div class="divider"></div>
+                    <button class="action-btn">Pro</button>
+                </div>
             </div>
         `;
 
         const connectBtn = card.querySelector('.connect-btn');
-        const sliderContainer = card.querySelector('.status-container');
-        const fill = card.querySelector('.status-bar-fill');
-        const valueDisplay = card.querySelector('.status-number');
+        const sliderContainer = card.querySelector(`#slider-${index}`);
+        const fill = card.querySelector(`#fill-${index}`);
+        const valueDisplay = card.querySelector(`#volumeValue-${index}`);
+        const deviceinfo = card.querySelector('.device-info');
+        if (connect) {
+            deviceinfo.style.display = 'none';
+            card.classList.add('expanded');
+            setTimeout(() => connectBtn.style.display = 'none', 600);
+            try {
+                const volume = getVolume();
+                const fillPercent = (volume.volume / maxBluetoothValue) * 100;
+                fill.style.width = `${fillPercent}%`;
+                valueDisplay.textContent = volume.logicalValue;
+            } catch (err) {
+                console.error('Failed to get volume:', err);
+            }
+        }
 
         connectBtn.addEventListener('click', async () => {
             card.classList.add('expanded');
+            deviceinfo.style.display = 'none';
             setTimeout(() => connectBtn.style.display = 'none', 600);
 
             try {
@@ -55,50 +101,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentDevice = device.address;
                 console.log(`Connected to ${device.address}`);
 
-                // Récupérer et afficher le volume actuel
-                const volume = await window.electronAPI.invoke('ble-get-volume', currentDevice);
-                console.log(`🔊 Volume brut (Bluetooth): ${volume}`);
+                const volume = getVolume();
 
-                // Conversion en niveau logique (Soundboks)
-                const logicalValue = Math.round((volume / maxBluetoothValue) * maxLogicalSteps);
-
-                // Mise à jour de l’UI
-                const fillPercent = (volume / maxBluetoothValue) * 100;
+                const fillPercent = (volume.volume / maxBluetoothValue) * 100;
                 fill.style.width = `${fillPercent}%`;
-                valueDisplay.textContent = logicalValue;
+                valueDisplay.textContent = volume.logicalValue;
 
-                console.log(`🎚️ Niveau logique : ${logicalValue}`);
+                console.log(`🎚️ Niveau logique : ${volume.logicalValue}`);
+                localStorage.setItem('currentDevice', currentDevice); // Store the current device in localStorage
             } catch (err) {
                 console.error('Connection failed:', err);
             }
         });
 
-        // Slider logic
+        async function getVolume() {
+            const volume = await window.electronAPI.invoke('ble-get-volume', currentDevice);
+            const logicalValue = Math.round((volume / maxBluetoothValue) * maxLogicalSteps);
+            return logicalValue, volume;
+        }
+        
         let dragging = false;
 
         function updateSlider(clientX) {
             const rect = sliderContainer.getBoundingClientRect();
             let posX = clientX - rect.left;
 
-            // Clamp position
             posX = Math.max(0, Math.min(posX, rect.width));
-
             const percent = posX / rect.width;
 
-            // Calcul du niveau logique
             const logicalValue = Math.round(percent * maxLogicalSteps);
-
-            // Conversion vers valeur Bluetooth
             const bluetoothValue = Math.round((logicalValue / maxLogicalSteps) * maxBluetoothValue);
 
-            // Mise à jour UI
             const fillPercent = (bluetoothValue / maxBluetoothValue) * 100;
             fill.style.width = `${fillPercent}%`;
             valueDisplay.textContent = logicalValue;
-
-            // Debug
-            console.log(`🎚️ Niveau logique: ${logicalValue}`);
-            console.log(`📶 Valeur Bluetooth à envoyer : ${bluetoothValue}`);
 
             if (currentDevice) {
                 window.electronAPI.invoke('ble-set-volume', {
@@ -134,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return card;
     }
-
     scanBtn.addEventListener('click', async () => {
         deviceList.innerHTML = '';
         statusEl.textContent = 'Scanning for devices...';
@@ -145,12 +180,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
             devices.forEach((device, index) => {
                 console.log(`Device found: ${device.name} (${device.address})`);
-                const card = createDeviceCard(device, index);
+                const card = createDeviceCard(device, indexCard);
                 deviceList.appendChild(card);
+                indexCard++;
             });
         } catch (err) {
             console.error('Erreur pendant le scan BLE :', err);
             statusEl.textContent = 'Scan failed. Please try again.';
         }
+    });
+
+    const loadingBarFill = document.querySelector('.loading-bar-fill');
+
+    function simulateLoading() {
+      let width = 0;
+      loadingBarFill.style.width = '0%';
+
+      const interval = setInterval(() => {
+        if (width >= 100) {
+          clearInterval(interval);
+        } else {
+          width += 1;
+          loadingBarFill.style.width = width + '%';
+        }
+      }, loadingTime); // 30ms * 100 = 3s pour remplir
+    }
+
+    // Lancer le chargement quand on clique sur "Loading"
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+    // Fonction pour afficher la popup et lancer le chargement
+    loadingBTN.addEventListener('click', () => {
+      modalOverlay.classList.add('active');
+      simulateLoading();
+    });
+
+    // Fermer la popup
+    modalCloseBtn.addEventListener('click', () => {
+      modalOverlay.classList.remove('active');
     });
 });

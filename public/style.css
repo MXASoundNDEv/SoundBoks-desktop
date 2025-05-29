@@ -42,9 +42,8 @@ h1 {
   max-width: 500px;
   box-shadow: 0 5px 15px rgba(255, 0, 0, 0.1);
   display: flex;
-  justify-content: center; /* centrer le bouton */
+  justify-content: center;
 }
-
 
 .btn {
   background-color: var(--primary);
@@ -75,28 +74,13 @@ h1 {
   border-radius: 18px;
   padding: 20px;
   display: flex;
-  justify-content: space-between; /* ce qui place "connect" à droite */
+  justify-content: space-between;
   align-items: center;
   transition: all 0.6s ease;
   transform-origin: top center;
   opacity: 0;
   transform: translateY(40px);
   animation: slideIn 0.6s forwards;
-}
-
-.device-info {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex: 1; /* occupe tout l'espace sauf le bouton */
-}
-
-
-@keyframes slideIn {
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
 }
 
 .device-card.expanded {
@@ -107,10 +91,17 @@ h1 {
   transform: scale(1.02);
 }
 
+.device-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+}
+
 .speaker-icon {
   width: 50px;
   height: 65px;
-  background: url('speaker-icon-removebg.png') no-repeat center;
+  background: url('./image/Sbicon.png') no-repeat center;
   background-size: contain;
 }
 
@@ -123,7 +114,6 @@ h1 {
   border-radius: 10px;
   cursor: pointer;
   transition: transform 0.3s ease;
-  margin-left: 5em; /* pousse à droite */
 }
 
 .connect-btn:hover {
@@ -147,37 +137,164 @@ h1 {
   margin-top: 20px;
 }
 
-.status-container {
+.top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.speaker-image {
+  width: 130px;
+  height: 150px;
+  background: url('./image/speaker_icon-255x255.ico') no-repeat center;
+  background-size: contain;
+}
+
+.divider {
+  width: 3px;
+  background-color: gray;
+  margin: 0 15px;
+}
+
+.info {
+  margin-left: 10px;
+  flex: 1;
+}
+
+.status-icons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.icon {
+  width: 22px;
+  height: 22px;
+}
+
+.Header {
+  width: 100%;
+  background-color: #1a1a1a;
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.github-icon {
+  width: 64px;
+  height: 64px;
+  background: url('./image/Github.png') no-repeat center;
+  background-size: contain;
+}
+
+.sdbBL-icon {
+  width: 64px;
+  height: 64px;
+  background: url('./image/sbBanner\ L.png') no-repeat center;
+  background-size: contain;
+}
+
+.sdbBR-icon {
+  width: 64px;
+  height: 64px;
+  background: url('./image/sbBanner\ R.png') no-repeat center;
+  background-size: contain;
+}
+
+.sdb-icon {
+  width: 64px;
+  height: 64px;
+  background: url('./image/Sbicon.png') no-repeat center;
+  background-size: contain;
+}
+
+.parram-icon {
+  width: 64px;
+  height: 64px;
+  background: url('./image/Settings.png') no-repeat center;
+  background-size: contain;
+}
+
+/* Bluetooth icon */
+.status-icons .bluetooth-icon {
+  width: 22px;
+  height: 22px;
+  background: url('./image/Bluetooth.png') no-repeat center;
+  background-size: contain;
+}
+
+/* Signal icon */
+.status-icons .signal-icon {
+  width: 22px;
+  height: 22px;
+  background: url('./image/Align center.png') no-repeat center;
+  background-size: contain;
+}
+
+/* More icon */
+.top-row .more-icon {
+  width: 30px;
+  height: 30px;
+  background: url('./image/more.png') no-repeat center;
+  background-size: contain;
+}
+
+/* Volume icon */
+.volume-bar .volume-icon {
+  width: 30px;
+  height: 30px;
+  background: url('./image/Volume 4.png') no-repeat center;
+  background-size: contain;
+}
+
+.volume-bar {
+  display: flex;
+  align-items: center;
   background-color: var(--gray);
-  border-radius: 12px;
+  border-radius: 10px;
+  margin: 15px 0;
+  overflow: hidden;
   height: 80px;
   position: relative;
-  margin: 20px 0;
-  cursor: pointer;
 }
 
-.status-bar-fill {
+.fill {
   background-color: var(--primary);
+  width: 30%;
   height: 100%;
-  width: 0%;
-  transition: width 0.1s ease;
-  border-radius: 12px;
+  transition: width 0.2s ease;
 }
 
-.status-number {
+.volume-icon {
+  user-select: none;
+  -webkit-user-drag: none;
+  position: absolute;
+  left: 45%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+}
+
+.volume-number {
+  user-select: none;
   position: absolute;
   right: 20px;
+  font-size: 2.5em;
+  font-weight: bold;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 2em;
-  font-weight: bold;
 }
 
 .actions {
   display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 10px;
+  gap: 10px;
 }
 
 .action-btn {
@@ -187,11 +304,97 @@ h1 {
   padding: 14px;
   border-radius: 10px;
   border: none;
-  font-size: 1em;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .action-btn:hover {
-  background-color: #3a3a3a;
+  transform: scale(1.05);
+}
+
+@keyframes slideIn {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.loading-card {
+  width: 90%;
+  max-width: 450px;
+  height: 20px;
+  background-color: var(--gray);
+  border-radius: 10px;
+  margin-top: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.loading-bar {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.loading-bar-fill {
+  height: 100%;
+  width: 0%;
+  background-color: var(--primary);
+  transition: width 0.3s ease-in-out;
+}
+
+/* Fond sombre derrière la modale */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: none; /* affichée dynamiquement */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Contenu de la modale */
+.modal {
+  background-color: var(--card, #1a1a1a);
+  padding: 25px;
+  border-radius: 15px;
+  max-width: 500px;
+  width: 90%;
+  color: var(--white, #fff);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  text-align: center;
+  transform: scale(0.95);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+/* Modale active (animée) */
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-overlay.active .modal {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Bouton de fermeture */
+.modal-close {
+  background: var(--primary, #c40029);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  margin-top: 20px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background 0.3s ease;
+}
+
+.modal-close:hover {
+  background: #a3001f;
 }
