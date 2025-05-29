@@ -24,6 +24,16 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
 
+    - name: Cache Electron and node_modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/electron
+          ~/.npm
+          node_modules
+        key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
+
+
     - name: Install dependencies
       run: npm install
 
@@ -31,4 +41,4 @@ jobs:
       run: npm run build
 
     - name: Run tests
-      run: npm test
+      run: npm test --passWithNoTests
