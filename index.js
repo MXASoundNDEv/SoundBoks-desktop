@@ -1,5 +1,14 @@
 // index.js (point d'entrée Electron)
-const { app, BrowserWindow, ipcMain } = require('electron');
+const {
+    app,
+    BrowserWindow,
+    ipcMain,
+    webContents,
+    WebContentsView,
+    Menu,
+    Tray,
+    screen
+} = require('electron');
 const path = require('path');
 const BLEManager = require('./lib/ble_manager.js');
 const bleManager = new BLEManager();
@@ -7,16 +16,27 @@ let currentDevice; // Variable pour stocker le périphérique actuellement conne
 let currentVolume; // Variable pour stocker le volume actuel
 
 let win;
+let tray;
+
+const TrayIcon = path.join(__dirname, 'public/image', 'speaker_icon-32x32.ico');
+const AppIcon = path.join(__dirname, 'public/image', 'speaker_icon-255x255.ico');
 
 console.log('BLEManager instance:', bleManager);
 console.log('BLEManager.scan exists:', typeof bleManager.scan === 'function');
 
 function createWindow() {
     win = new BrowserWindow({
-        width: 450,
-        height: 700,
-        icon: path.join(__dirname, 'public/image', 'speaker_icon-255x255.ico'),
+        width: 400,
+        height: 600,
+        autoHideMenuBar: true,
+        icon: AppIcon,
+        show: false,
+        frame: false,
+        resizable: false,
+        skipTaskbar: true,
+        transparent: true, // optionnel
         webPreferences: {
+            devTools: false,
             preload: path.resolve(__dirname, 'preload.js'),
             contextIsolation: true,
             nodeIntegration: true,
@@ -28,8 +48,55 @@ function createWindow() {
     win.loadFile('public/index.html');
 }
 
+function showWindowBottomRight() {
+    const display = screen.getPrimaryDisplay();
+    const {
+        width,
+        height
+    } = display.workAreaSize;
+
+    const winBounds = win.getBounds();
+
+    const x = width - winBounds.width - 10; // 10px de marge du bord droit
+    const y = height - winBounds.height - 10; // 10px du bas
+
+    win.setBounds({
+        x,
+        y,
+        width: winBounds.width,
+        height: winBounds.height
+    });
+    win.show();
+}
+
 app.whenReady().then(() => {
     createWindow();
+
+    tray = new Tray(TrayIcon);
+    const contextMenu = Menu.buildFromTemplate([{
+            label: 'Open',
+            click: () => {
+                showWindowBottomRight();
+            }
+        },
+        {
+            label: 'Close',
+            click: () => {
+                app.quit();
+            }
+        }
+    ]);
+
+    tray.setToolTip('Soundbok Control App');
+    tray.setContextMenu(contextMenu);
+
+    tray.on('click', () => {
+        if (win.isVisible()) {
+            win.hide();
+        } else {
+            showWindowBottomRight();
+        }
+    });
 
     ipcMain.handle('ble-scan', async () => {
         console.log('Démarrage du scan BLE...');
@@ -56,7 +123,10 @@ app.whenReady().then(() => {
         }
     });
 
-    ipcMain.handle('ble-set-volume', async (event, { deviceId, volume }) => {
+    ipcMain.handle('ble-set-volume', async (event, {
+        deviceId,
+        volume
+    }) => {
         console.log(`Réglage du volume pour le périphérique ${deviceId} à ${volume}`);
         try {
             await bleManager.setVolume(volume); // Appel de la méthode `setVolume`
@@ -83,7 +153,10 @@ app.whenReady().then(() => {
     });
 
     ipcMain.handle('status', async () => {
-        return { volume: currentVolume, device: currentDevice };
+        return {
+            volume: currentVolume,
+            device: currentDevice
+        };
     });
 
     app.on('activate', () => {

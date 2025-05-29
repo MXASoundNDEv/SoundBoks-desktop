@@ -2,13 +2,14 @@
 const maxLogicalSteps = 11; // Valeurs de 0 à 11 inclus
 const maxBluetoothValue = 255;
 const indexCard = 0; // Index de l'élément à créer
-const loadingTime = 30; // Temps de chargement en millisecondes (3 secondes)
+const loadingTime = 100; // Temps de chargement en millisecondes (3 secondes)
 
 // This file is part of the SDBAPPJS project.
 document.addEventListener('DOMContentLoaded', () => {
     const statusEl = document.getElementById('status');
     const scanBtn = document.getElementById('scan-btn');
     const deviceList = document.getElementById('device-list');
+    const modalOverlay = document.getElementById('modalOverlay');
     const maxValue = 11;
 
     let currentDevice = null;
@@ -20,13 +21,16 @@ document.addEventListener('DOMContentLoaded', () => {
             currentDevice = status.device;
             currentVolume = status.volume;
             console.log(`Périphérique déjà connecté : ${currentDevice}`);
-            const card = createDeviceCard({ name: 'Connected Device', address: currentDevice }, indexCard, true);
+            const card = createDeviceCard({
+                name: 'Connected Device',
+                address: currentDevice
+            }, indexCard, true);
             deviceList.appendChild(card);
             indexCard++;
         }
     });
 
-    function createDeviceCard(device, index,connect = false) {
+    function createDeviceCard(device, index, connect = false) {
         const card = document.createElement('div');
         card.className = 'device-card';
         card.style.animationDelay = `${index * 150}ms`;
@@ -119,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const logicalValue = Math.round((volume / maxBluetoothValue) * maxLogicalSteps);
             return logicalValue, volume;
         }
-        
+
         let dragging = false;
 
         function updateSlider(clientX) {
@@ -174,6 +178,10 @@ document.addEventListener('DOMContentLoaded', () => {
         deviceList.innerHTML = '';
         statusEl.textContent = 'Scanning for devices...';
 
+    // Fonction pour afficher la popup et lancer le chargement
+        modalOverlay.classList.add('active');
+        simulateLoading();
+
         try {
             const devices = await window.electronAPI.invoke('ble-scan'); // Appel de la méthode `ble-scan`
             statusEl.textContent = `Found ${devices.length} devices.`;
@@ -186,38 +194,23 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } catch (err) {
             console.error('Erreur pendant le scan BLE :', err);
-            statusEl.textContent = 'Scan failed. Please try again.';
         }
     });
 
     const loadingBarFill = document.querySelector('.loading-bar-fill');
 
     function simulateLoading() {
-      let width = 0;
-      loadingBarFill.style.width = '0%';
+        let width = 0;
+        loadingBarFill.style.width = '0%';
 
-      const interval = setInterval(() => {
-        if (width >= 100) {
-          clearInterval(interval);
-        } else {
-          width += 1;
-          loadingBarFill.style.width = width + '%';
-        }
-      }, loadingTime); // 30ms * 100 = 3s pour remplir
+        const interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+                modalOverlay.classList.remove('active');
+            } else {
+                width += 1;
+                loadingBarFill.style.width = width + '%';
+            }
+        }, loadingTime); // 30ms * 100 = 3s pour remplir
     }
-
-    // Lancer le chargement quand on clique sur "Loading"
-    const modalOverlay = document.getElementById('modalOverlay');
-    const modalCloseBtn = document.getElementById('modalCloseBtn');
-
-    // Fonction pour afficher la popup et lancer le chargement
-    loadingBTN.addEventListener('click', () => {
-      modalOverlay.classList.add('active');
-      simulateLoading();
-    });
-
-    // Fermer la popup
-    modalCloseBtn.addEventListener('click', () => {
-      modalOverlay.classList.remove('active');
-    });
 });
