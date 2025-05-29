@@ -1,5 +1,5 @@
 # 🎛️ Soundboks Controller
-[![Build](https://github.com/MXASoundNDEv/SoundBoks-desktop/actions/workflows/build.yml/badge.svg)](https://github.com/MXASoundNDEv/SoundBoks-desktop/actions/workflows/build.yml)
+[![Build](https://github.com/MXASoundNDEv/SoundBoks-desktop/actions/workflows/node.js.yml/badge.svg)](https://github.com/MXASoundNDEv/SoundBoks-desktop/actions/workflows/node.js.yml)
 
 Contrôle ta **Soundboks** directement depuis un ordinateur via **Bluetooth Low Energy (BLE)** avec une application **ElectronJS** moderne et réactive.
 
