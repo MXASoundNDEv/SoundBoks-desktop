@@ -7,14 +7,24 @@ const {
     WebContentsView,
     Menu,
     Tray,
-    screen
+    screen,
+    shell
 } = require('electron');
 const path = require('path');
 const BLEManager = require('./lib/ble_manager.js');
+const {
+    updateElectronApp
+} = require('update-electron-app')
+require('process')
+fs = require('fs');
+
+//seting up the environment variable
 const bleManager = new BLEManager();
 let currentDevice; // Variable pour stocker le périphérique actuellement connecté
 let currentVolume; // Variable pour stocker le volume actuel
-const { updateElectronApp } = require('update-electron-app')
+
+
+// Mettre à jour l'application Electron si une nouvelle version est disponible depuis git Hub en passent par le repo dans le package.json (a tester)
 updateElectronApp()
 
 let win;
@@ -32,13 +42,13 @@ function createWindow() {
         height: 600,
         autoHideMenuBar: true,
         icon: AppIcon,
-        show: false,
-        frame: false,
-        resizable: false,
-        skipTaskbar: true,
-        transparent: true, // optionnel
+        show: isDev() ? true : true, // Afficher la fenêtre en mode développement, sinon la cacher
+        frame: isDev() ? true : true, // Afficher la barre de titre en mode développement, sinon la cacher
+        resizable: isDev() ? true : true, // Permettre le redimensionnement en mode développement, sinon le désactiver
+        skipTaskbar: isDev() ? true : false, // optionnel, ne pas afficher la fenêtre dans la barre des tâches en mode développement
+        transparent: isDev() ? true : false, // optionnel, rendre la fenêtre transparente en mode développement
         webPreferences: {
-            devTools: false,
+            devTools: isDev() ? true : true, // Activer les outils de développement en mode développement
             preload: path.resolve(__dirname, 'preload.js'),
             contextIsolation: true,
             nodeIntegration: true,
@@ -49,6 +59,8 @@ function createWindow() {
 
     win.loadFile('public/index.html');
 }
+
+
 
 function showWindowBottomRight() {
     const display = screen.getPrimaryDisplay();
@@ -71,9 +83,16 @@ function showWindowBottomRight() {
     win.show();
 }
 
+function isDev() {
+    return !app.isPackaged;
+}
+
 app.whenReady().then(() => {
     createWindow();
 
+
+
+    // Afficher la fenêtre en bas à droite de l'écran
     tray = new Tray(TrayIcon);
     const contextMenu = Menu.buildFromTemplate([{
             label: 'Open',
@@ -98,6 +117,18 @@ app.whenReady().then(() => {
         } else {
             showWindowBottomRight();
         }
+    });
+
+    ipcMain.handle('read-user-data', async (event, fileName) => {
+        const path = app.getPath('userData');
+        const buf = await fs.promises.readFile(`${path}/${fileName}`);
+        console.log(`Lecture du fichier ${fileName} dans le dossier utilisateur :`, buf);
+        return buf;
+    });
+
+    // Gestion des événements IPC
+    ipcMain.handle('github-page', () => {
+        shell.openExternal("https://github.com/MXASoundNDEv/SoundBoks-desktop")
     });
 
     ipcMain.handle('ble-scan', async () => {
@@ -170,6 +201,8 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
 });
 
+
+// Événement pour déconnecter les périphériques BLE avant la fermeture de l'application(evite le nombre maximal de connection a la sb)
 app.on('before-quit', async (event) => {
     console.log('Déconnexion des périphériques BLE avant la fermeture...');
     try {

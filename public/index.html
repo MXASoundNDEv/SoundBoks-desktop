@@ -12,6 +12,7 @@
 
 <body>
 
+  <!-- Ovelay loading bar -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <div class="loading-card">
@@ -22,14 +23,41 @@
     </div>
   </div>
 
+  <!-- Overlay parametre -->
+  <div class="modal-overlay" id="parram-modal">
+    <div class="modal">
+      <h1>Parametre</h1>
+      <div class="Line-separator-paramettre"></div>
+      <div class="card-param">
+        <div class="param-item">
+          <label for="Scan-time-out" >Scan time out :</label>
+          <input type="number" name="Scan-time-out" id="Scan-time-out" placeholder="scan time out in ms" value="10000">(ms)
+        </div>
+        <div class="Line-separator-paramettre"></div>
+        <div class="param-item">
+          <label for="auto-stop-scan">Stop scan when discovery :</label>
+          <input type="checkbox" id="auto-stop-scan" name="auto-stop-scan">
+        </div>
+        <div class="Line-separator-paramettre"></div>
+        <div class="param-item">
+          <label for="message-timeout">Time betewin each ble-message</label>
+          <input type="number" id="message-timeout" name="message-timeout" placeholder="message time out in ms" value="200">(ms)
+        </div>
+      </div>
+      <button class="modal-close" id="parram-close-btn">Fermer</button>
+    </div>
+  </div>
+
+  <!-- Header bar with logo -->
   <div class="Header">
-    <a href="https://github.com/MXASoundNDEv/SoundBoks-desktop"><div class="github-icon" alt="Github" ></div></a>
+    <div class="github-icon" id="github-link" alt="Github" ></div>
     <div class="sdbBL-icon" alt=""></div>
     <div class="sdb-icon" alt="SB icon"></div>
     <div class="sdbBR-icon" alt=""></div>
-    <div class="parram-icon" alt="Settings"></div>
+    <div class="parram-icon" id="parram-btn" alt="Settings"></div>
   </div>
 
+  <!-- Scan btn -->
   <div class="scan-section">
     <button class="btn" id="scan-btn">Scan</button>
   </div>
@@ -37,7 +65,8 @@
   <div class="status" id="status"></div>
   <div class="device-list" id="device-list"></div>
 
-  <script src="ui.js"></script>
+  <script src="./script/ui.js"></script>
+  <script src="./script/param.js"></script>
 </body>
 
 </html>

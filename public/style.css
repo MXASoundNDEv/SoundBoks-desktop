@@ -19,6 +19,7 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 30px;
+  padding-top: 0px;
   min-height: 100vh;
   overflow: hidden;
 }
@@ -27,11 +28,12 @@ h1 {
   background: var(--card);
   padding: 25px;
   border-radius: 20px;
-  font-size: 2.4em;
-  margin: 0 0 30px;
+  font-size: 2em;
+  margin: 0 0 20px;
   letter-spacing: 1px;
   box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
   text-align: center;
+  color: var(--white);
 }
 
 .scan-section {
@@ -383,7 +385,52 @@ h1 {
   opacity: 1;
 }
 
-/* Bouton de fermeture */
+.Line-separator-paramettre {
+  height: 2px;
+  background-color: var(--primary, #c40029);
+  margin: 15px 0;
+}
+
+.card-param {
+  background-color: var(--card-alt, #242424);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.param-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.param-item label {
+  font-size: 1em;
+  color: var(--white);
+  margin-right: 10px;
+}
+
+.param-item input[type="number"],
+.param-item input[type="checkbox"] {
+  padding: 8px;
+  border: 1px solid var(--gray, #2b2b2b);
+  border-radius: 5px;
+  background-color: var(--card, #1a1a1a);
+  color: var(--white);
+  font-size: 1em;
+}
+
+.param-item input[type="number"]::placeholder {
+  color: var(--gray, #2b2b2b);
+}
+
+.param-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
 .modal-close {
   background: var(--primary, #c40029);
   color: white;

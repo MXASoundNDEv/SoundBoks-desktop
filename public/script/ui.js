@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const scanBtn = document.getElementById('scan-btn');
     const deviceList = document.getElementById('device-list');
     const modalOverlay = document.getElementById('modalOverlay');
+    const githubLink = document.getElementById('github-link');
+    const parametersbtn =document.getElementById('parram-btn');
+    const parransModal = document.getElementById('parram-modal');
+    const parramsCloseBtn = document.getElementById('parram-close-btn');
     const maxValue = 11;
 
     let currentDevice = null;
@@ -213,4 +217,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, loadingTime); // 30ms * 100 = 3s pour remplir
     }
+
+
+    // Lien vers GitHub
+    githubLink.addEventListener('click', () => {
+        try {
+            window.electronAPI.invoke('github-page');
+        }catch (err) {
+            console.error('Failed to open GitHub link:', err);
+        }
+    });
+
+    // Bouton des paramètres
+    parametersbtn.addEventListener('click', () => {
+        parransModal.classList.toggle('active');
+        if (parransModal.classList.contains('active')) {
+            console.log('Parameters modal opened');
+        } else {
+            console.log('Parameters modal closed');
+        }
+    });
+
+    // Bouton de fermeture des paramètres
+    parramsCloseBtn.addEventListener('click', () => {
+        parransModal.classList.remove('active');
+        console.log('Parameters modal closed');
+    });
+
 });
