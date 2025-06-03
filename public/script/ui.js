@@ -1,8 +1,9 @@
 //config
 const maxLogicalSteps = 11; // Valeurs de 0 à 11 inclus
 const maxBluetoothValue = 255;
-const indexCard = 0; // Index de l'élément à créer
+let indexCard = 0; // Index de l'élément à créer
 const loadingTime = 100; // Temps de chargement en millisecondes (3 secondes)
+let devices
 
 // This file is part of the SDBAPPJS project.
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,9 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const deviceList = document.getElementById('device-list');
     const modalOverlay = document.getElementById('modalOverlay');
     const githubLink = document.getElementById('github-link');
-    const parametersbtn =document.getElementById('parram-btn');
+    const parametersbtn = document.getElementById('parram-btn');
     const parransModal = document.getElementById('parram-modal');
     const parramsCloseBtn = document.getElementById('parram-close-btn');
+    const paramScanAutoStop = document.getElementById('auto-stop-scan');
+
+
     const maxValue = 11;
 
     let currentDevice = null;
@@ -178,52 +182,82 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return card;
     }
+
     scanBtn.addEventListener('click', async () => {
         deviceList.innerHTML = '';
         statusEl.textContent = 'Scanning for devices...';
 
-    // Fonction pour afficher la popup et lancer le chargement
+        // Afficher la popup de chargement
         modalOverlay.classList.add('active');
-        simulateLoading();
 
         try {
-            const devices = await window.electronAPI.invoke('ble-scan'); // Appel de la méthode `ble-scan`
-            statusEl.textContent = `Found ${devices.length} devices.`;
+            // Lancer la simulation de chargement
+            startLoading();
 
+            // Attendre que `ble-scan` se termine
+            devices = await window.electronAPI.invoke('ble-scan');
+            console.log('[UI.JS] Devices found:', devices);
+            stopLoading();
+
+            // Continuer avec les périphériques détectés
+            statusEl.textContent = `Found ${devices.length} devices.`;
             devices.forEach((device, index) => {
-                console.log(`Device found: ${device.name} (${device.address})`);
                 const card = createDeviceCard(device, indexCard);
                 deviceList.appendChild(card);
                 indexCard++;
             });
         } catch (err) {
             console.error('Erreur pendant le scan BLE :', err);
+            statusEl.textContent = 'Erreur pendant le scan.';
+        } finally {
+            // Fermer la popup après le scan
+            stopLoading();
         }
     });
 
     const loadingBarFill = document.querySelector('.loading-bar-fill');
 
-    function simulateLoading() {
+    let loadingInterval = null; // Variable globale pour stocker l'ID de l'intervalle
+
+    async function startLoading() {
         let width = 0;
         loadingBarFill.style.width = '0%';
 
-        const interval = setInterval(() => {
-            if (width >= 100) {
-                clearInterval(interval);
-                modalOverlay.classList.remove('active');
-            } else {
-                width += 1;
-                loadingBarFill.style.width = width + '%';
+        return new Promise(resolve => {
+            // Si un intervalle est déjà en cours, ne pas en démarrer un nouveau
+            if (loadingInterval !== null) {
+                console.warn('La barre de chargement est déjà en cours.');
+                return;
             }
-        }, loadingTime); // 30ms * 100 = 3s pour remplir
+
+            loadingInterval = setInterval(() => {
+                if (width >= 100) {
+                    stopLoading(); // Arrêter la barre de chargement
+                    resolve(); // Résoudre la promesse
+                } else {
+                    width += 1;
+                    loadingBarFill.style.width = `${width}%`;
+                }
+            }, loadingTime);
+        });
     }
 
+    function stopLoading() {
+        if (loadingInterval !== null) {
+            clearInterval(loadingInterval);
+            loadingInterval = null; // Réinitialiser l'ID de l'intervalle
+            loadingBarFill.style.width = '100%'; // Compléter la barre
+            modalOverlay.classList.remove('active'); // Masquer la popup
+        } else {
+            console.warn('Aucune barre de chargement en cours.');
+        }
+    }
 
     // Lien vers GitHub
     githubLink.addEventListener('click', () => {
         try {
             window.electronAPI.invoke('github-page');
-        }catch (err) {
+        } catch (err) {
             console.error('Failed to open GitHub link:', err);
         }
     });

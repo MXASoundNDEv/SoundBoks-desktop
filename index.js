@@ -11,6 +11,7 @@ const {
     shell
 } = require('electron');
 const path = require('path');
+const DataStorage = require('./lib/store.js');
 const BLEManager = require('./lib/ble_manager.js');
 const {
     updateElectronApp
@@ -18,10 +19,22 @@ const {
 require('process')
 fs = require('fs');
 
+
 //seting up the environment variable
-const bleManager = new BLEManager();
+const dataStorage = new DataStorage();
+const bleManager = new BLEManager(10000,200,false); // Initialiser BLEManager avec des valeurs par défaut pour le scanTimeout, messageDelay et autostopscan
+
 let currentDevice; // Variable pour stocker le périphérique actuellement connecté
 let currentVolume; // Variable pour stocker le volume actuel
+
+// Initialiser le stockage des données utilisateur
+dataStorage.init().then(() => {
+    console.log('Stockage des données utilisateur initialisé.');
+}).catch(err => {
+    console.error('Erreur lors de l\'initialisation du stockage des données utilisateur :', err);
+});
+
+
 
 
 // Mettre à jour l'application Electron si une nouvelle version est disponible depuis git Hub en passent par le repo dans le package.json (a tester)
@@ -34,7 +47,6 @@ const TrayIcon = path.join(__dirname, 'public/image', 'speaker_icon-32x32.ico');
 const AppIcon = path.join(__dirname, 'public/image', 'speaker_icon-255x255.ico');
 
 console.log('BLEManager instance:', bleManager);
-console.log('BLEManager.scan exists:', typeof bleManager.scan === 'function');
 
 function createWindow() {
     win = new BrowserWindow({
@@ -119,14 +131,39 @@ app.whenReady().then(() => {
         }
     });
 
-    ipcMain.handle('read-user-data', async (event, fileName) => {
-        const path = app.getPath('userData');
-        const buf = await fs.promises.readFile(`${path}/${fileName}`);
-        console.log(`Lecture du fichier ${fileName} dans le dossier utilisateur :`, buf);
-        return buf;
+    // Gestion des événements IPC
+
+    ipcMain.handle('read-user-data', async () => {
+        try {
+            const userdata = await dataStorage.readData('userdata.json');
+            console.log('Données utilisateur :', userdata);
+            return userdata; // Retourne les données utilisateur lues depuis 'userdata.json'
+        } catch (err) {
+            console.error('Erreur lors de la récupération des données utilisateur :', err);
+        }
     });
 
-    // Gestion des événements IPC
+    ipcMain.handle('write-user-data', async (event, data) => {
+        try {
+            await dataStorage.writeData('userdata.json', JSON.stringify(data, null, 2)); // Écrire les données dans 'fileName.txt'
+
+            //setup data fot ble manager
+            if (data.paramScanTimeOut) {
+                bleManager.scanTimeout = data.paramScanTimeOut; // Mettre à jour le délai de scan BLE
+            }
+            if (data.bleMessageDelay) {
+                bleManager.paramMessageInterval = data.paramMessageInterval; // Mettre à jour le délai entre les messages BLE
+            }
+            if (data.paramScanAutoStop !== undefined) {
+                bleManager.autostopscan = data.paramScanAutoStop; // Mettre à jour l'option d'arrêt automatique du scan BLE
+            }
+            return true; // Retourne true si l'écriture a réussi
+        } catch (err) {
+            console.error('Erreur lors de l\'écriture des données :', err);
+            throw err; // Lance l'erreur pour que l'appelant puisse la gérer
+        }
+    });
+
     ipcMain.handle('github-page', () => {
         shell.openExternal("https://github.com/MXASoundNDEv/SoundBoks-desktop")
     });
